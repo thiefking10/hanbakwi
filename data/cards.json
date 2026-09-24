@@ -1,0 +1,14 @@
+[
+  { "text": "여행 중 복권에 당첨됐어요! 100만원을 받아요.", "effect": { "type": "money", "amount": 100 } },
+  { "text": "기념품을 너무 많이 샀어요. 60만원을 내요.", "effect": { "type": "money", "amount": -60 } },
+  { "text": "여행 보너스! 50만원을 받아요.", "effect": { "type": "money", "amount": 50 } },
+  { "text": "병원에 다녀왔어요. 40만원을 내요.", "effect": { "type": "money", "amount": -40 } },
+  { "text": "고속열차를 타고 출발점으로 돌아가요.", "effect": { "type": "moveTo", "tile": "출발" } },
+  { "text": "서울로 초대받았어요! 서울로 이동해요.", "effect": { "type": "moveTo", "tile": "서울" } },
+  { "text": "제주도 여행권에 당첨됐어요! 제주로 이동해요.", "effect": { "type": "moveTo", "tile": "제주" } },
+  { "text": "길을 잘못 들었어요. 3칸 뒤로 가요.", "effect": { "type": "moveBack", "steps": 3 } },
+  { "text": "여권을 잃어버려 무인도에 갇혔어요.", "effect": { "type": "goIsland" } },
+  { "text": "생일이에요! 모두에게 20만원씩 축하금을 받아요.", "effect": { "type": "collectFromAll", "amount": 20 } },
+  { "text": "한턱 쏘기로 했어요. 모두에게 20만원씩 줘요.", "effect": { "type": "payToAll", "amount": 20 } },
+  { "text": "휴게소에서 쉬어 가요. 휴게소로 이동해요.", "effect": { "type": "moveTo", "tile": "휴게소" } }
+]

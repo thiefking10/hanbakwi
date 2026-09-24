@@ -1,0 +1,13 @@
+{
+  "startMoney": 1500,
+  "salary": 80,
+  "maxPlayers": 4,
+  "islandFine": 50,
+  "maxIslandTurns": 3,
+  "buildCostRate": 0.5,
+  "rentRates": [0.15, 0.7, 1.6, 3.4],
+  "monopolyMultiplier": 2,
+  "transportRent": 40,
+  "sellRate": 0.5,
+  "maxRounds": 40
+}
