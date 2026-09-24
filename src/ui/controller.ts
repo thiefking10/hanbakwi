@@ -3,10 +3,12 @@ import { BOARD, RULES } from "../engine/board";
 import { eulReul } from "../engine/josa";
 import { createGame, currentPlayer, dispatch, legalActions } from "../engine/game";
 import type { Action, GameEvent, GameState, GameOptions, PlayerSetup } from "../engine/types";
+import { audio } from "./audio";
 import { BoardView } from "./boardView";
 import { el, sleep } from "./dom";
 import { Hud } from "./hud";
 import { buildResultScreen } from "./screens";
+import { ShakeDetector } from "./shake";
 import { describeTile } from "./tileInfo";
 import { DIE_FACES, LEVEL_NAMES } from "./theme";
 
@@ -31,6 +33,7 @@ export class GameController {
   private runId = 0;
   private fast = false;
   private travelPick: ((tile: number) => void) | null = null;
+  private readonly shake = new ShakeDetector();
 
   constructor(private readonly onExit: () => void) {
     this.board = new BoardView((index) => this.onTileTap(index));
@@ -42,12 +45,19 @@ export class GameController {
       this.fast = !this.fast;
       this.hud.speedButton.textContent = this.fast ? "▶ 보통 속도" : "⏩ 빠르게";
     });
+    this.hud.soundButton.addEventListener("click", () => {
+      audio.enabled = !audio.enabled;
+      this.hud.soundButton.textContent = audio.enabled ? "🔊" : "🔇";
+    });
     this.hud.menuButton.addEventListener("click", () => {
       if (window.confirm("게임을 그만하고 처음 화면으로 돌아갈까요?")) this.stop();
     });
   }
 
   start(setups: PlayerSetup[], options: GameOptions, seed = Math.floor(Math.random() * 1_000_000) + 1): void {
+    // 소리와 흔들기 센서는 사용자가 화면을 누른 순간에만 켤 수 있다 (start는 시작 버튼을 누를 때 불린다).
+    audio.unlock();
+    void this.shake.enable();
     this.runId += 1;
     this.state = createGame(setups, seed, options);
     this.styles = setups.map((_, i) => (i % 2 === 0 ? "bold" : "careful"));
@@ -150,16 +160,46 @@ export class GameController {
       if (id !== this.runId) return;
       if (event.type === "turn") continue;
       if (event.type === "roll" && event.dice) {
+        audio.dice();
         await this.rollDiceAnimation(event.dice);
         continue;
       }
       if (event.type === "move" && event.to !== undefined) {
-        await this.board.walkToken(event.player, event.to, this.fast ? 40 : 130);
+        await this.board.walkToken(event.player, event.to, this.fast ? 40 : 130, () => audio.step());
         continue;
       }
       this.setBanner(event.text);
       this.refresh();
+      this.playSound(event);
       await this.delay(event.type === "info" ? 500 : 750);
+    }
+  }
+
+  private playSound(event: GameEvent): void {
+    switch (event.type) {
+      case "buy":
+      case "salary":
+      case "rest":
+        audio.coin();
+        break;
+      case "build":
+        audio.build();
+        break;
+      case "rent":
+      case "tax":
+      case "sell":
+        audio.pay();
+        break;
+      case "card":
+        audio.card();
+        break;
+      case "island":
+      case "bankrupt":
+        audio.bad();
+        break;
+      case "gameover":
+        audio.fanfare();
+        break;
     }
   }
 
@@ -174,6 +214,7 @@ export class GameController {
       const buttons: Choice[] = [{ label: "🎲 주사위 굴리기", action: { type: "roll" }, primary: true }];
       if (has("payFine")) buttons.push({ label: `벌금 ${RULES.islandFine}만원 내고 나가기`, action: { type: "payFine" } });
       const lines = player.inIsland ? ["무인도에 갇혔어요! 더블이 나오면 탈출해요."] : [];
+      if (this.shake.hasSensor) lines.push("📳 폰을 흔들어서 굴려도 돼요!");
       return this.choose(lines, buttons, { space: { type: "roll" } });
     }
 
@@ -214,6 +255,7 @@ export class GameController {
       };
       const finish = (action: Action): void => {
         window.removeEventListener("keydown", onKey);
+        this.shake.onShake = null;
         this.travelPick = null;
         this.board.setPickable(false);
         this.info.replaceChildren();
@@ -228,7 +270,11 @@ export class GameController {
         button.addEventListener("click", () => finish(choice.action));
         this.actions.append(button);
       }
-      if (options.space) window.addEventListener("keydown", onKey);
+      if (options.space) {
+        window.addEventListener("keydown", onKey);
+        const space = options.space;
+        this.shake.onShake = () => finish(space);
+      }
       if (options.picking) {
         this.board.setPickable(true, currentPlayer(this.state).position);
         this.travelPick = (tile) => finish({ type: "travelTo", tile });

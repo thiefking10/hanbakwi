@@ -10,10 +10,11 @@ export class Hud {
   private readonly cards = el("div", { class: "hud-cards" });
   private readonly log = el("div", { class: "hud-log" });
   readonly speedButton = el("button", { class: "small-button", text: "⏩ 빠르게" });
+  readonly soundButton = el("button", { class: "small-button", text: "🔊" });
   readonly menuButton = el("button", { class: "small-button", text: "☰ 그만하기" });
 
   constructor() {
-    const tools = el("div", { class: "hud-tools" }, [this.speedButton, this.menuButton]);
+    const tools = el("div", { class: "hud-tools" }, [this.speedButton, this.soundButton, this.menuButton]);
     this.root.append(this.round, this.cards, this.log, tools);
   }
 

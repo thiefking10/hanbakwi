@@ -86,7 +86,7 @@ export class BoardView {
   }
 
   /** 말을 앞으로 한 칸씩 걸어서 옮긴다. 멀리 이동하는 경우(카드, 세계여행)는 바로 옮긴다. */
-  async walkToken(player: number, to: number, stepMs: number): Promise<void> {
+  async walkToken(player: number, to: number, stepMs: number, onStep?: () => void): Promise<void> {
     const from = this.tokenPositions[player];
     const distance = (to - from + TILE_COUNT) % TILE_COUNT;
     if (distance === 0) return;
@@ -97,6 +97,7 @@ export class BoardView {
     }
     for (let step = 1; step <= distance; step++) {
       this.placeToken(player, (from + step) % TILE_COUNT);
+      onStep?.();
       await sleep(stepMs);
     }
   }
