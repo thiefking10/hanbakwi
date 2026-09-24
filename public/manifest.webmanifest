@@ -1,0 +1,15 @@
+{
+  "name": "한 바퀴 여행",
+  "short_name": "한바퀴여행",
+  "description": "한국 도시를 사고 건물을 지으며 즐기는 보드게임",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#14213d",
+  "theme_color": "#14213d",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

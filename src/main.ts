@@ -250,3 +250,10 @@ if (new URLSearchParams(window.location.search).get("dev") === "online") {
   renderMenu();
   void resumeIfPossible();
 }
+
+// 배포된 게임은 처음 접속하면 파일을 폰에 저장해 두어, 홈 화면에 추가해서 앱처럼 열 수 있다 (개발 중에는 쓰지 않는다).
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(() => {
+    // 등록에 실패해도 게임은 그대로 된다.
+  });
+}
