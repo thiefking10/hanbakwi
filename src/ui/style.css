@@ -212,6 +212,58 @@ button {
   color: #94a3b8;
 }
 
+.big-button.wide {
+  width: min(78vw, 420px);
+}
+.big-button.alt {
+  background: #2a9d8f;
+  color: #fff;
+}
+.row {
+  display: flex;
+  gap: 10px;
+}
+.wide-input {
+  width: min(70vw, 300px);
+  flex: none;
+  text-align: center;
+}
+.code-input {
+  font-size: 22px;
+  letter-spacing: 6px;
+}
+.room-code {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 10px;
+  color: #ffd166;
+}
+.lobby-slots {
+  grid-template-columns: repeat(2, minmax(0, 300px));
+}
+.slot-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+}
+.slot-name.empty {
+  color: #94a3b8;
+  font-weight: 400;
+}
+.error {
+  min-height: 1.2em;
+  color: #ff8a8a;
+  font-size: 13px;
+}
+.back-corner {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+}
+button:disabled {
+  opacity: 0.55;
+}
+
 /* ---------------------------------------------------------- 게임 화면 */
 
 .game {

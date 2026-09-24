@@ -124,6 +124,8 @@ export interface GameState {
   /** 가장 최근 행동으로 생긴 사건들 */
   events: GameEvent[];
   winner: number | null;
+  /** 행동이 처리될 때마다 1씩 늘어난다. 온라인에서 화면이 놓친 상태가 있는지 알아내는 데 쓴다. */
+  seq: number;
 }
 
 export type Action =

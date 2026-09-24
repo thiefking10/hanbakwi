@@ -44,6 +44,7 @@ export function createGame(setups: PlayerSetup[], seed: number, options: GameOpt
     log: [],
     events: [],
     winner: null,
+    seq: 0,
   };
   state.deck = shuffledIndices(state, CARDS.length);
   emit(state, { type: "turn", player: 0, text: `${state.players[0].name}님의 차례예요.` });
@@ -102,6 +103,7 @@ export function dispatch(state: GameState, action: Action, options: DispatchOpti
   if (!isLegal(state, action)) return state;
   const s = structuredClone(state);
   s.events = [];
+  s.seq += 1;
 
   switch (action.type) {
     case "roll":
