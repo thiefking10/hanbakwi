@@ -1,4 +1,5 @@
 import { BOARD, CARDS, RULES, TILE_COUNT, buildCost, islandIndex, rentFor, tileIndexByName, tileValue } from "./board";
+import { eulReul, euroRo } from "./josa";
 import { rollDie, shuffledIndices } from "./rng";
 import type { Action, GameEvent, GameOptions, GameState, Player, PlayerSetup } from "./types";
 
@@ -162,7 +163,7 @@ function sellCheapest(s: GameState, playerId: number): boolean {
   const player = s.players[playerId];
   player.money += proceeds;
   s.tiles[best] = { owner: null, level: 0 };
-  emit(s, { type: "sell", player: playerId, tile: best, amount: proceeds, text: `${player.name}님이 돈이 모자라 ${tileName(best)}을(를) ${proceeds}만원에 팔았어요.` });
+  emit(s, { type: "sell", player: playerId, tile: best, amount: proceeds, text: `${player.name}님이 돈이 모자라 ${eulReul(tileName(best))} ${proceeds}만원에 팔았어요.` });
   return true;
 }
 
@@ -217,7 +218,7 @@ function doRoll(s: GameState, forced?: [number, number]): void {
   const sum = dice[0] + dice[1];
   const isDouble = dice[0] === dice[1];
   s.dice = dice;
-  emit(s, { type: "roll", player: player.id, dice, text: `${player.name}님이 주사위를 굴려 ${dice[0]}, ${dice[1]}이(가) 나왔어요.` });
+  emit(s, { type: "roll", player: player.id, dice, text: `${player.name}님이 주사위를 굴렸어요! (${dice[0]} + ${dice[1]} = ${sum})` });
 
   if (player.inIsland) {
     if (isDouble) {
@@ -312,7 +313,7 @@ function landOn(s: GameState, chain: number): void {
         if (player.money >= (def.price ?? 0)) {
           s.decision = { type: "buy", tile: index, price: def.price ?? 0 };
         } else {
-          emit(s, { type: "info", player: player.id, text: `${tileName(index)}을(를) 사기에는 돈이 모자라요.` });
+          emit(s, { type: "info", player: player.id, text: `${eulReul(tileName(index))} 사기에는 돈이 모자라요.` });
         }
       } else if (tile.owner === player.id) {
         if (def.type === "city" && tile.level < RULES.rentRates.length - 1) {
@@ -381,7 +382,7 @@ function drawCard(s: GameState, chain: number): void {
       const to = tileIndexByName(effect.tile);
       const from = player.position;
       player.position = to;
-      emit(s, { type: "move", player: player.id, from, to, text: `${player.name}님이 ${tileName(to)}(으)로 이동했어요.` });
+      emit(s, { type: "move", player: player.id, from, to, text: `${player.name}님이 ${euroRo(tileName(to))} 이동했어요.` });
       if (to < from) giveSalary(s);
       if (chain < MAX_CHAIN) landOn(s, chain + 1);
       break;
@@ -389,7 +390,7 @@ function drawCard(s: GameState, chain: number): void {
     case "moveBack": {
       const from = player.position;
       player.position = (from - effect.steps + TILE_COUNT) % TILE_COUNT;
-      emit(s, { type: "move", player: player.id, from, to: player.position, text: `${player.name}님이 ${tileName(player.position)}(으)로 물러났어요.` });
+      emit(s, { type: "move", player: player.id, from, to: player.position, text: `${player.name}님이 ${euroRo(tileName(player.position))} 물러났어요.` });
       if (chain < MAX_CHAIN) landOn(s, chain + 1);
       break;
     }
@@ -421,7 +422,7 @@ function doBuy(s: GameState): void {
   if (!decision || decision.type !== "buy") return;
   player.money -= decision.price;
   s.tiles[decision.tile].owner = player.id;
-  emit(s, { type: "buy", player: player.id, tile: decision.tile, amount: decision.price, text: `${player.name}님이 ${tileName(decision.tile)}을(를) ${decision.price}만원에 샀어요.` });
+  emit(s, { type: "buy", player: player.id, tile: decision.tile, amount: decision.price, text: `${player.name}님이 ${eulReul(tileName(decision.tile))} ${decision.price}만원에 샀어요.` });
   s.decision = null;
   s.phase = "end";
 }
@@ -439,7 +440,7 @@ function doBuild(s: GameState): void {
     player: player.id,
     tile: decision.tile,
     amount: decision.cost,
-    text: `${player.name}님이 ${tileName(decision.tile)}에 ${LEVEL_NAMES[decision.level]}을(를) 지었어요. (${decision.cost}만원)`,
+    text: `${player.name}님이 ${tileName(decision.tile)}에 ${eulReul(LEVEL_NAMES[decision.level])} 지었어요. (${decision.cost}만원)`,
   });
   s.decision = null;
   s.phase = "end";

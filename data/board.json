@@ -6,7 +6,7 @@
   { "name": "춘천", "type": "city", "price": 130, "group": 2 },
   { "name": "김포공항", "type": "transport", "price": 200 },
   { "name": "원주", "type": "city", "price": 140, "group": 2 },
-  { "name": "여행자 세금", "type": "tax", "amount": 100 },
+  { "name": "세금", "type": "tax", "amount": 100 },
   { "name": "무인도", "type": "island" },
   { "name": "대전", "type": "city", "price": 160, "group": 3 },
   { "name": "청주", "type": "city", "price": 170, "group": 3 },
@@ -28,7 +28,7 @@
   { "name": "인천", "type": "city", "price": 360, "group": 7 },
   { "name": "수원", "type": "city", "price": 380, "group": 7 },
   { "name": "여행카드", "type": "card" },
-  { "name": "고속터미널", "type": "transport", "price": 200 },
+  { "name": "터미널", "type": "transport", "price": 200 },
   { "name": "제주", "type": "city", "price": 400, "group": 8 },
   { "name": "서울", "type": "city", "price": 450, "group": 8 }
 ]
