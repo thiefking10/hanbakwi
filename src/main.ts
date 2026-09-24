@@ -44,8 +44,13 @@ function write(key: string, value: string | null): void {
   }
 }
 
+// 개발용: 같은 컴퓨터의 탭 두 개로 시험할 때 주소에 ?pid=아무이름 을 붙이면 다른 기기처럼 동작한다.
+const pidOverride = new URLSearchParams(window.location.search).get("pid");
+const keySuffix = pidOverride ? `:${pidOverride}` : "";
+
 /** 이 기기를 구분하는 값 (다시 접속했을 때 같은 자리로 돌아오는 데 쓴다). */
 function devicePid(): string {
+  if (pidOverride) return pidOverride;
   let pid = read("boardgame:pid");
   if (!pid) {
     pid = Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
@@ -54,8 +59,8 @@ function devicePid(): string {
   return pid;
 }
 
-const ROOM_KEY = "boardgame:room";
-const NAME_KEY = "boardgame:name";
+const ROOM_KEY = `boardgame:room${keySuffix}`;
+const NAME_KEY = `boardgame:name${keySuffix}`;
 
 let dbInstance: Db | null = null;
 function getDb(): Db | null {
