@@ -82,7 +82,7 @@ export class GameController {
 
     this.hud.speedButton.addEventListener("click", () => {
       this.fast = !this.fast;
-      this.hud.speedButton.textContent = this.fast ? "▶ 보통 속도" : "⏩ 빠르게";
+      this.hud.speedButton.textContent = this.fast ? "▶ 보통" : "⏩ 빠르게";
     });
     this.hud.soundButton.addEventListener("click", () => {
       audio.enabled = !audio.enabled;

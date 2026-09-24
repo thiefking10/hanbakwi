@@ -45,6 +45,20 @@ describe("AI", () => {
     expect(finished).toBe(total);
   }, 120000);
 
+  it("10바퀴 제한으로 시작하면 10바퀴가 끝나기 전에 승자가 정해진다", () => {
+    for (let seed = 1; seed <= 6; seed++) {
+      let state = createGame(AIS.slice(0, 2 + (seed % 3)), seed, { maxRounds: 10 });
+      let steps = 0;
+      while (state.phase !== "over" && steps < 5000) {
+        state = dispatch(state, chooseAction(state, STYLES[state.current]));
+        steps++;
+      }
+      expect(state.phase).toBe("over");
+      expect(state.winner).not.toBeNull();
+      expect(state.round).toBeLessThanOrEqual(11);
+    }
+  });
+
   it("땅을 사고 건물을 짓는다 (아무것도 안 하는 AI가 아니다)", () => {
     let bought = 0;
     let built = 0;

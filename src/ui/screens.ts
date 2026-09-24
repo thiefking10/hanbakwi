@@ -2,6 +2,7 @@ import { RULES } from "../engine/board";
 import { netWorth } from "../engine/game";
 import type { GameState, PlayerSetup } from "../engine/types";
 import { el } from "./dom";
+import { GAME_LENGTHS } from "./lengths";
 import { PLAYER_COLORS, PLAYER_COLOR_NAMES } from "./theme";
 
 type SlotKind = "human" | "ai" | "none";
@@ -10,12 +11,6 @@ export interface SetupResult {
   setups: PlayerSetup[];
   maxRounds: number;
 }
-
-const LENGTHS: { label: string; rounds: number }[] = [
-  { label: "짧게 20바퀴", rounds: 20 },
-  { label: "보통 40바퀴", rounds: 40 },
-  { label: "끝까지", rounds: 0 },
-];
 
 /** 시작 화면: 플레이어 자리 4개(사람/컴퓨터/없음)와 게임 길이를 고른다. */
 export function buildSetupScreen(onStart: (result: SetupResult) => void): HTMLElement {
@@ -65,7 +60,7 @@ export function buildSetupScreen(onStart: (result: SetupResult) => void): HTMLEl
   const lengthBox = el("div", { class: "lengths" });
   const renderLengths = (): void => {
     lengthBox.replaceChildren();
-    for (const option of LENGTHS) {
+    for (const option of GAME_LENGTHS) {
       const button = el("button", { class: "chip", text: option.label });
       button.classList.toggle("selected", option.rounds === rounds);
       button.addEventListener("click", () => {

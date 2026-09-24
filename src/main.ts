@@ -16,6 +16,7 @@ import {
 } from "./net/room";
 import { GameController, type OnlineSession } from "./ui/controller";
 import { buildCreateScreen, buildJoinScreen, buildLobby, buildMenu } from "./ui/onlineScreens";
+import { createFullscreenButton } from "./ui/fullscreen";
 import { buildSetupScreen } from "./ui/screens";
 import type { GameState } from "./engine/types";
 
@@ -71,9 +72,19 @@ function getDb(): Db | null {
 
 // ---------------------------------------------------------------- 화면 전환
 
+// 메뉴·대기실 화면 오른쪽 위에 떠 있는 전체화면 버튼 (게임 화면에서는 오른쪽 안내판의 버튼을 쓴다).
+const cornerFullscreen = createFullscreenButton("ghost-button fs-corner");
+document.body.append(cornerFullscreen);
+
+/** 화면을 바꾼다. 게임 화면이면 모서리 전체화면 버튼을 숨긴다. */
+function show(node: HTMLElement, inGame = false): void {
+  cornerFullscreen.classList.toggle("hidden", inGame);
+  app.replaceChildren(node);
+}
+
 /** 메뉴를 그린다 (저장된 방 정보는 그대로 둔다). */
 function renderMenu(): void {
-  app.replaceChildren(
+  show(
     buildMenu({
       onLocal: showLocalSetup,
       onCreate: showCreate,
@@ -92,7 +103,7 @@ function showMenu(): void {
 function showLocalSetup(): void {
   const setup = buildSetupScreen(({ setups, maxRounds }) => {
     const controller = new GameController(showMenu);
-    app.replaceChildren(controller.root);
+    show(controller.root, true);
     controller.start(setups, { maxRounds });
     // 개발용: 콘솔에서 __game.debugState 로 지금 상태를 볼 수 있다.
     (window as unknown as { __game: GameController }).__game = controller;
@@ -102,7 +113,7 @@ function showLocalSetup(): void {
   back.textContent = "← 처음으로";
   back.addEventListener("click", showMenu);
   setup.append(back);
-  app.replaceChildren(setup);
+  show(setup);
 }
 
 function showCreate(): void {
@@ -114,7 +125,7 @@ function showCreate(): void {
       .then((code) => showLobby(db, code, true))
       .catch((error: Error) => window.alert(error.message));
   }, showMenu);
-  app.replaceChildren(screen);
+  show(screen);
 }
 
 function showJoin(): void {
@@ -135,7 +146,7 @@ function showJoin(): void {
     },
     showMenu,
   );
-  app.replaceChildren(root);
+  show(root);
 }
 
 /** 대기실. 방장은 자리를 정하고 시작하고, 참가자는 시작을 기다린다. 이미 시작한 방이면 바로 게임으로 들어간다. */
@@ -170,7 +181,7 @@ function showLobby(db: Db, code: string, isHost: boolean): void {
       showMenu();
     },
   });
-  app.replaceChildren(lobby.root);
+  show(lobby.root);
 
   const refreshLobby = (): void => lobby.update(slots, meta);
 
@@ -192,7 +203,7 @@ function showLobby(db: Db, code: string, isHost: boolean): void {
     closeLobby();
     const session: OnlineSession = { db, code, pid, role: meta.hostPid === pid ? "host" : "client", myIndex, roster: meta.roster };
     const controller = new GameController(showMenu);
-    app.replaceChildren(controller.root);
+    show(controller.root, true);
     controller.startOnline(session, state);
     (window as unknown as { __game: GameController }).__game = controller;
   };

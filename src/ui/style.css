@@ -255,6 +255,18 @@ button {
   color: #ff8a8a;
   font-size: 13px;
 }
+.fs-corner {
+  position: fixed;
+  right: calc(10px + env(safe-area-inset-right));
+  top: calc(8px + env(safe-area-inset-top));
+  min-height: 40px;
+  padding: 0 12px;
+  font-size: 13px;
+  z-index: 20;
+}
+.fs-corner.hidden {
+  display: none;
+}
 .back-corner {
   position: absolute;
   left: 10px;
@@ -555,4 +567,10 @@ button:disabled {
 .rank-worth {
   color: #ffd166;
   font-weight: 700;
+}
+
+.hud-tools .small-button {
+  padding: 0 4px;
+  font-size: 11px;
+  white-space: nowrap;
 }

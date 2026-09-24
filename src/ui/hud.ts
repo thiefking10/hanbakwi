@@ -1,6 +1,7 @@
 import { netWorth } from "../engine/game";
 import type { GameState } from "../engine/types";
 import { el } from "./dom";
+import { createFullscreenButton } from "./fullscreen";
 import { PLAYER_COLORS } from "./theme";
 
 /** 오른쪽 안내판: 바퀴 수, 플레이어 카드, 최근 기록, 속도 버튼. */
@@ -11,10 +12,11 @@ export class Hud {
   private readonly log = el("div", { class: "hud-log" });
   readonly speedButton = el("button", { class: "small-button", text: "⏩ 빠르게" });
   readonly soundButton = el("button", { class: "small-button", text: "🔊" });
+  readonly fullscreenButton = createFullscreenButton("small-button", true);
   readonly menuButton = el("button", { class: "small-button", text: "☰ 그만하기" });
 
   constructor() {
-    const tools = el("div", { class: "hud-tools" }, [this.speedButton, this.soundButton, this.menuButton]);
+    const tools = el("div", { class: "hud-tools" }, [this.speedButton, this.soundButton, this.fullscreenButton, this.menuButton]);
     this.root.append(this.round, this.cards, this.log, tools);
   }
 

@@ -1,13 +1,8 @@
 import { RULES } from "../engine/board";
 import type { RoomMeta, Slot } from "../net/room";
 import { el } from "./dom";
+import { GAME_LENGTHS } from "./lengths";
 import { PLAYER_COLORS } from "./theme";
-
-const LENGTHS: { label: string; rounds: number }[] = [
-  { label: "짧게 20바퀴", rounds: 20 },
-  { label: "보통 40바퀴", rounds: 40 },
-  { label: "끝까지", rounds: 0 },
-];
 
 /** 처음 메뉴: 한 폰으로 / 방 만들기 / 방 들어가기 */
 export function buildMenu(options: {
@@ -52,7 +47,7 @@ export function buildCreateScreen(
   const lengthBox = el("div", { class: "lengths" });
   const renderLengths = (): void => {
     lengthBox.replaceChildren();
-    for (const option of LENGTHS) {
+    for (const option of GAME_LENGTHS) {
       const chip = el("button", { class: "chip", text: option.label });
       chip.classList.toggle("selected", option.rounds === rounds);
       chip.addEventListener("click", () => {
